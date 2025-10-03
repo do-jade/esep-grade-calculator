@@ -1,9 +1,8 @@
 package esepunittests
 
 type GradeCalculator struct {
-	assignments []Grade
-	exams       []Grade
-	essays      []Grade
+	// Bonus: Uses a single list for all types of grades instead of three separate ones.
+	grades []Grade
 }
 
 type GradeType int
@@ -32,9 +31,7 @@ type Grade struct {
 
 func NewGradeCalculator() *GradeCalculator {
 	return &GradeCalculator{
-		assignments: make([]Grade, 0),
-		exams:       make([]Grade, 0),
-		essays:      make([]Grade, 0),
+		grades: make([]Grade, 0),
 	}
 }
 
@@ -55,46 +52,38 @@ func (gc *GradeCalculator) GetFinalGrade() string {
 }
 
 func (gc *GradeCalculator) AddGrade(name string, grade int, gradeType GradeType) {
-	switch gradeType {
-	case Assignment:
-		gc.assignments = append(gc.assignments, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Assignment,
-		})
-	case Exam:
-		gc.exams = append(gc.exams, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Exam,
-		})
-	case Essay:
-		gc.essays = append(gc.essays, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Essay,
-		})
-	}
+	gc.grades = append(gc.grades, Grade{
+		Name:  name,
+		Grade: grade,
+		Type:  gradeType,
+	})
 }
 
 func (gc *GradeCalculator) calculateNumericalGrade() int {
-	assignment_average := computeAverage(gc.assignments)
-	exam_average := computeAverage(gc.exams)
-	// Part 3: Essay average now derives from gc.essays and not gc.exams.
-	essay_average := computeAverage(gc.essays)
+	assignment_average := computeAverage(gc.grades, Assignment)
+	exam_average := computeAverage(gc.grades, Exam)
+	essay_average := computeAverage(gc.grades, Essay)
 
 	weighted_grade := float64(assignment_average)*.5 + float64(exam_average)*.35 + float64(essay_average)*.15
 
 	return int(weighted_grade)
 }
 
-func computeAverage(grades []Grade) int {
+// Bonus 1: Updated compute average so it fits the bonus context.
+func computeAverage(grades []Grade, category GradeType) int {
 	sum := 0
+	// Tracks the number of grades that matches the requested category.
+	count := 0
 
 	// Part 3: Sums the scores and not indexes anymore to produce correct average.
 	for _, g := range grades {
-		sum += g.Grade
+		// Adds the score and count only if the type matches the requested category.
+		if g.Type == category {
+			sum += g.Grade
+			count++
+		}
 	}
 
-	return sum / len(grades)
+	// Returns the proper average of the grade category.
+	return sum / count
 }
