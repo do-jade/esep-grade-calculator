@@ -39,9 +39,10 @@ func TestGetGradeF(t *testing.T) {
 
 	gradeCalculator := NewGradeCalculator()
 
-	gradeCalculator.AddGrade("open source assignment", 100, Assignment)
-	gradeCalculator.AddGrade("exam 1", 95, Exam)
-	gradeCalculator.AddGrade("essay on ai ethics", 91, Essay)
+	// Part 3: Lowered the scores so that it produces an F.
+	gradeCalculator.AddGrade("open source assignment", 56, Assignment)
+	gradeCalculator.AddGrade("exam 1", 54, Exam)
+	gradeCalculator.AddGrade("essay on ai ethics", 52, Essay)
 
 	actual_value := gradeCalculator.GetFinalGrade()
 
